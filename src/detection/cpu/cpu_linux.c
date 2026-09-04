@@ -600,7 +600,8 @@ static const char* parseCpuInfo(
             (cpuMHz->length == 0 && ffParsePropLine(line, "clock :", cpuMHz)) ||
             (cpu->name.length == 0 && ffParsePropLine(line, "cpu :", &cpu->name)) ||
 #elif __mips__ || __mips
-            (cpu->name.length == 0 && ffParsePropLine(line, "cpu model :", &cpu->name)) ||
+            (cpu->name.length == 0 && ffParsePropLine(line, "model name :", &cpu->name)) ||
+            (cpuMHz->length == 0 && ffParsePropLine(line, "CPU MHz :", cpuMHz)) ||
 #elif __loongarch__
             (cpu->name.length == 0 && ffParsePropLine(line, "Model Name :", &cpu->name)) ||
             (cpuMHz->length == 0 && ffParsePropLine(line, "CPU MHz :", cpuMHz)) ||
@@ -975,6 +976,12 @@ static const char* detectPhysicalCores(FFCPUResult* cpu) {
         }
 
         ffStrbufSetStatic(&cpu->vendor, "Apple");
+    }
+    #endif
+    #if __mips__ || __mips
+    else if (ffStrEquals(vendor, "loongson"))
+    {
+        ffStrbufSetStatic(&cpu->vendor, "Loongson");
     }
     #endif
     else if (ffStrEquals(vendor, "qcom")) {
